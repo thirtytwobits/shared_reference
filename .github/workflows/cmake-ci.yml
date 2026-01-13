@@ -87,12 +87,16 @@ jobs:
       - name: Run CMake workflow
         run: cmake --workflow --preset ${{ matrix.workflow }}
 
+      - name: Generate coverage report
+        if: matrix.workflow == 'clang-latest-coverage'
+        run: cmake --build --preset clang-latest-coverage --target coverage-report
+
       - name: Upload coverage report
         if: matrix.workflow == 'clang-latest-coverage'
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: build/clang-latest-coverage/coverage_report/
+          path: build/clang-latest-coverage/coverage-tests/
           retention-days: 30
 
       - name: Upload test results

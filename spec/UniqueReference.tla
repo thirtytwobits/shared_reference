@@ -142,8 +142,9 @@ SafetyInvariant ==
  * safety properties (NoUseAfterFree, NoInvalidReference) hold.
  *)
 
-(* Placeholder for TLC-compatible version with recursion *)
-RefCountMatchesClients == TRUE
+(* Reference count matches sum of all client references *)
+RefCountMatchesClients == 
+    refCount = Cardinality({<<c, i>> : c \in Clients, i \in 1..clientRefs[c]})
 
 -----------------------------------------------------------------------------
 (* Initial State *)
