@@ -1,0 +1,464 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 23,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja Multi-Config",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "warnings": {
+                "dev": true,
+                "deprecated": true,
+                "uninitialized": true,
+                "unusedCli": true,
+                "systemVars": false
+            },
+            "errors": {
+                "dev": true,
+                "deprecated": true
+            },
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
+            }
+        },
+        {
+            "name": "gcc-17",
+            "inherits": "base",
+            "displayName": "GCC 17",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-17",
+                "CMAKE_CXX_COMPILER": "g++-17"
+            }
+        },
+        {
+            "name": "gcc-23",
+            "inherits": "base",
+            "displayName": "GCC 23",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc-23",
+                "CMAKE_CXX_COMPILER": "g++-23"
+            }
+        },
+        {
+            "name": "gcc-latest",
+            "inherits": "base",
+            "displayName": "GCC Latest",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "clang-17",
+            "inherits": "base",
+            "displayName": "Clang 17",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-17",
+                "CMAKE_CXX_COMPILER": "clang++-17"
+            }
+        },
+        {
+            "name": "clang-23",
+            "inherits": "base",
+            "displayName": "Clang 23",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang-23",
+                "CMAKE_CXX_COMPILER": "clang++-23"
+            }
+        },
+        {
+            "name": "clang-latest",
+            "inherits": "base",
+            "displayName": "Clang Latest",
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "asan-base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fsanitize=address -fno-omit-frame-pointer -g -O1",
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fsanitize=address -fno-omit-frame-pointer -g -O1",
+                "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=address",
+                "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=address"
+            }
+        },
+        {
+            "name": "tsan-base",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fsanitize=thread -fno-omit-frame-pointer -g -O1",
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fsanitize=thread -fno-omit-frame-pointer -g -O1",
+                "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=thread",
+                "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=thread"
+            }
+        }
+            "displayName": "GCC 23"
+        },
+        {
+            "name": "gcc-23-asan",
+            "inherits": ["gcc-23", "asan-base"],
+            "displayName": "GCC 23 with AddressSanitizer"
+        },
+        {
+            "name": "gcc-23-tsan",
+            "inherits": ["gcc-23", "tsan-base"],
+            "displayName": "GCC 23 with ThreadSanitizer"
+        },
+        {
+            "name": "gcc-latest",
+            "inherits": "gcc-latest",
+            "displayName": "GCC Latest"
+        },
+        {
+            "name": "gcc-latest-asan",
+            "inherits": ["gcc-latest", "asan-base"],
+            "displayName": "GCC Latest with AddressSanitizer"
+        },
+        {
+            "name": "gcc-latest-tsan",
+            "inherits": ["gcc-latest", "tsan-base"],
+            "displayName": "GCC Latest with ThreadSanitizer"
+        },
+        {
+            "name": "clang-17",
+            "inherits": "clang-17",
+            "displayName": "Clang 17"
+        },
+        {
+            "name": "clang-17-asan",
+            "inherits": ["clang-17", "asan-base"],
+            "displayName": "Clang 17 with AddressSanitizer"
+        },
+        {
+            "name": "clang-17-tsan",
+            "inherits": ["clang-17", "tsan-base"],
+            "displayName": "Clang 17 with ThreadSanitizer"
+        },
+        {
+            "name": "clang-23",
+            "inherits": "clang-23",
+            "displayName": "Clang 23"
+        },
+        {
+            "name": "clang-23-asan",
+            "inherits": ["clang-23", "asan-base"],
+            "displayName": "Clang 23 with AddressSanitizer"
+        },
+        {
+            "name": "clang-23-tsan",
+            "inherits": ["clang-23", "tsan-base"],
+            "displayName": "Clang 23 with ThreadSanitizer"
+        },
+        {
+            "name": "clang-latest",
+            "inherits": "clang-latest",
+            "displayName": "Clang Latest"
+        },
+        {
+            "name": "clang-latest-asan",
+            "inherits": ["clang-latest", "asan-base"],
+            "displayName": "Clang Latest with AddressSanitizer"
+        },
+        {
+            "name": "clang-latest-tsan",
+            "inherits": ["clang-latest", "tsan-base"],
+            "displayName": "Clang Latest with "tsan-base"],
+            "displayName": "Clang Latest ThreadSanitizer"
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc-17-debug",
+            "configurePreset": "gcc-17-debug"
+        },
+        {
+            "name": "gcc-17-release",
+            "configurePreset": "gcc-17-release"
+        },
+        {
+            "name": "gcc-17-asan",
+            "configurePreset": "gcc-17-asan"
+        },
+        {
+            "name": "gcc-17-tsan",
+            "configurePreset": "gcc-17-tsan"
+        },
+        {
+            "name": "gcc-23-debug",
+            "configurePreset": "gcc-23-debug"
+        },
+        {
+            "name": "gcc-23-release",
+            "configurePreset": "gcc-23-release"
+        },
+        {
+            "name": "gcc-23-asan",
+            "configurePreset": "gcc-23-asan"
+        },
+        {
+            "name": "gcc-23-tsan",
+            "configurePreset": "gcc-23-tsan"
+        },
+        {
+            "name": "gcc-latest-debug",
+            "configurePreset": "gcc-latest-debug"
+        },
+        {
+            "name": "gcc-latest-release",
+            "configurePreset": "gcc-latest-release"
+        },
+        {
+            "name": "gcc-latest-asan",
+            "configurePreset": "gcc-latest-asan"
+        },
+        {
+            "name": "gcc-latest-tsan",
+            "configurePreset": "gcc-latest-tsan"
+        },
+        {",
+            "configuration": "Debug"
+        },
+        {
+            "name": "gcc-17-release",
+            "configurePreset": "gcc-17",
+            "configuration": "Release"
+        },
+        {
+            "name": "gcc-17-asan",
+            "configurePreset": "gcc-17-asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-17-tsan",
+            "configurePreset": "gcc-17-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-23-debug",
+            "configurePreset": "gcc-23",
+            "configuration": "Debug"
+        },
+        {
+            "name": "gcc-23-release",
+            "configurePreset": "gcc-23",
+            "configuration": "Release"
+        },
+        {
+            "name": "gcc-23-asan",
+            "configurePreset": "gcc-23-asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-23-tsan",
+            "configurePreset": "gcc-23-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-latest-debug",
+            "configurePreset": "gcc-latest",
+            "configuration": "Debug"
+        },
+        {
+            "name": "gcc-latest-release",
+            "configurePreset": "gcc-latest",
+            "configuration": "Release"
+        },
+        {
+            "name": "gcc-latest-asan",
+            "configurePreset": "gcc-latest-asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-latest-tsan",
+            "configurePreset": "gcc-latest-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-17-debug",
+            "configurePreset": "clang-17",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-17-release",
+            "configurePreset": "clang-17",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-17-asan",
+            "configurePreset": "clang-17-asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-17-tsan",
+            "configurePreset": "clang-17-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-23-debug",
+            "configurePreset": "clang-23",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-23-release",
+            "configurePreset": "clang-23",
+            "configuration": "Release"
+        },
+        {
+            "name": "clang-23-asan",
+            "configurePreset": "clang-23-asan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-23-tsan",
+            "configurePreset": "clang-23-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-17-release",
+            "configurePreset": "gcc-17",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-17-asan",
+            "configurePreset": "gcc-17-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-17-tsan",
+            "configurePreset": "gcc-17-tsan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-23-debug",
+            "configurePreset": "gcc-23",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-23-release",
+            "configurePreset": "gcc-23",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-23-asan",
+            "configurePreset": "gcc-23-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-23-tsan",
+            "configurePreset": "gcc-23-tsan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-latest-debug",
+            "configurePreset": "gcc-latest",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-latest-release",
+            "configurePreset": "gcc-latest",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-latest-asan",
+            "configurePreset": "gcc-latest-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "gcc-latest-tsan",
+            "configurePreset": "gcc-latest-tsan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-17-debug",
+            "configurePreset": "clang-17",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-17-release",
+            "configurePreset": "clang-17",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-17-asan",
+            "configurePreset": "clang-17-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-17-tsan",
+            "configurePreset": "clang-17-tsan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-23-debug",
+            "configurePreset": "clang-23",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-23-release",
+            "configurePreset": "clang-23",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-23-asan",
+            "configurePreset": "clang-23-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-23-tsan",
+            "configurePreset": "clang-23-tsan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-debug",
+            "configurePreset": "clang-latest",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-release",
+            "configurePreset": "clang-latest",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-asan",
+            "configurePreset": "clang-latest-asan",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-tsan",
+            "configurePreset": "clang-latest-tsan",
+            "configuration": "RelWithDebInfo

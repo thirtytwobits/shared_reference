@@ -42,6 +42,7 @@ CTestTestfile.cmake
 _deps/
 build/
 out/
+external/
 
 # IDE and Editor files
 .vscode/
@@ -50,6 +51,7 @@ out/
 *.swo
 *~
 .DS_Store
+.cache
 
 # Generated documentation
 docs/_build/

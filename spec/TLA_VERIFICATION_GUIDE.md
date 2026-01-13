@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Zoox.
+SPDX-License-Identifier: MIT
+-->
+
 # TLA+ Specification Verification Guide
 
 This document provides instructions for verifying that the C++ implementation in `include/zoox/memory_w_unique_reference.h` correctly implements the TLA+ specification in `specs/UniqueReference.tla`.

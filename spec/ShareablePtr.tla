@@ -1,5 +1,8 @@
 --------------------------- MODULE ShareablePtr ---------------------------
 (*
+ * Copyright (c) Zoox.
+ * SPDX-License-Identifier: MIT
+ *
  * TLA+ specification for ShareablePtr - a thread-safe reference-counted
  * smart pointer that supports sharing ownership across threads.
  *

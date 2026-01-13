@@ -1,5 +1,8 @@
 --------------------------- MODULE UniqueReference ---------------------------
 (*
+ * Copyright (c) Zoox.
+ * SPDX-License-Identifier: MIT
+ *
  * TLA+ specification for zoox::unique_reference - proving that references
  * cannot be invalid when the ref_owner owner follows the deletion protocol.
  *

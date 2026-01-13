@@ -9,7 +9,7 @@
         {
             "name": "base",
             "hidden": true,
-            "generator": "Ninja",
+            "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/build/${presetName}",
             "warnings": {
                 "dev": true,
@@ -23,25 +23,28 @@
                 "deprecated": true
             },
             "cacheVariables": {
-                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "CMAKE_CONFIGURATION_TYPES": "Debug;Release;RelWithDebInfo"
             }
         },
         {
             "name": "gcc-17",
             "inherits": "base",
-            "displayName": "GCC 17",
+            "displayName": "GCC C++17",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc-17",
-                "CMAKE_CXX_COMPILER": "g++-17"
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_CXX_STANDARD": "17"
             }
         },
         {
             "name": "gcc-23",
             "inherits": "base",
-            "displayName": "GCC 23",
+            "displayName": "GCC C++23",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "gcc-23",
-                "CMAKE_CXX_COMPILER": "g++-23"
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_CXX_STANDARD": "23"
             }
         },
         {
@@ -56,19 +59,21 @@
         {
             "name": "clang-17",
             "inherits": "base",
-            "displayName": "Clang 17",
+            "displayName": "Clang C++17",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-17",
-                "CMAKE_CXX_COMPILER": "clang++-17"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_STANDARD": "17"
             }
         },
         {
             "name": "clang-23",
             "inherits": "base",
-            "displayName": "Clang 23",
+            "displayName": "Clang C++23",
             "cacheVariables": {
-                "CMAKE_C_COMPILER": "clang-23",
-                "CMAKE_CXX_COMPILER": "clang++-23"
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_CXX_STANDARD": "23"
             }
         },
         {
@@ -81,380 +86,592 @@
             }
         },
         {
-            "name": "debug-base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
-            }
-        },
-        {
-            "name": "release-base",
-            "hidden": true,
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
-            }
-        },
-        {
             "name": "asan-base",
             "hidden": true,
+            "inherits": "base",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "CMAKE_CXX_FLAGS": "-fsanitize=address -fno-omit-frame-pointer -g",
-                "CMAKE_C_FLAGS": "-fsanitize=address -fno-omit-frame-pointer -g",
-                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address",
-                "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=address"
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fsanitize=address -fno-omit-frame-pointer -g -O1",
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fsanitize=address -fno-omit-frame-pointer -g -O1",
+                "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=address",
+                "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=address"
             }
         },
         {
             "name": "tsan-base",
             "hidden": true,
+            "inherits": "base",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "CMAKE_CXX_FLAGS": "-fsanitize=thread -fno-omit-frame-pointer -g",
-                "CMAKE_C_FLAGS": "-fsanitize=thread -fno-omit-frame-pointer -g",
-                "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=thread",
-                "CMAKE_SHARED_LINKER_FLAGS": "-fsanitize=thread"
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fsanitize=thread -fno-omit-frame-pointer -g -O1",
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fsanitize=thread -fno-omit-frame-pointer -g -O1",
+                "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=thread",
+                "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO": "-fsanitize=thread"
             }
         },
         {
-            "name": "gcc-17-debug",
-            "inherits": ["gcc-17", "debug-base"],
-            "displayName": "GCC 17 Debug"
+            "name": "coverage-base",
+            "hidden": true,
+            "inherits": "base",
+            "cacheVariables": {
+                "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-fprofile-instr-generate -fcoverage-mapping -g -O0",
+                "CMAKE_C_FLAGS_RELWITHDEBINFO": "-fprofile-instr-generate -fcoverage-mapping -g -O0",
+                "CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO": "-fprofile-instr-generate",
+                "CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO": "-fprofile-instr-generate",
+                "ENABLE_COVERAGE": "ON"
+            }
         },
         {
-            "name": "gcc-17-release",
-            "inherits": ["gcc-17", "release-base"],
-            "displayName": "GCC 17 Release"
+            "name": "clang-tidy-base",
+            "hidden": true,
+            "inherits": "base",
+            "cacheVariables": {
+                "ENABLE_CLANG_TIDY": "ON"
+            }
         },
         {
             "name": "gcc-17-asan",
             "inherits": ["gcc-17", "asan-base"],
-            "displayName": "GCC 17 AddressSanitizer"
+            "displayName": "GCC 17 with AddressSanitizer"
         },
         {
             "name": "gcc-17-tsan",
             "inherits": ["gcc-17", "tsan-base"],
-            "displayName": "GCC 17 ThreadSanitizer"
-        },
-        {
-            "name": "gcc-23-debug",
-            "inherits": ["gcc-23", "debug-base"],
-            "displayName": "GCC 23 Debug"
-        },
-        {
-            "name": "gcc-23-release",
-            "inherits": ["gcc-23", "release-base"],
-            "displayName": "GCC 23 Release"
+            "displayName": "GCC 17 with ThreadSanitizer"
         },
         {
             "name": "gcc-23-asan",
             "inherits": ["gcc-23", "asan-base"],
-            "displayName": "GCC 23 AddressSanitizer"
+            "displayName": "GCC 23 with AddressSanitizer"
         },
         {
             "name": "gcc-23-tsan",
             "inherits": ["gcc-23", "tsan-base"],
-            "displayName": "GCC 23 ThreadSanitizer"
-        },
-        {
-            "name": "gcc-latest-debug",
-            "inherits": ["gcc-latest", "debug-base"],
-            "displayName": "GCC Latest Debug"
-        },
-        {
-            "name": "gcc-latest-release",
-            "inherits": ["gcc-latest", "release-base"],
-            "displayName": "GCC Latest Release"
+            "displayName": "GCC 23 with ThreadSanitizer"
         },
         {
             "name": "gcc-latest-asan",
             "inherits": ["gcc-latest", "asan-base"],
-            "displayName": "GCC Latest AddressSanitizer"
+            "displayName": "GCC Latest with AddressSanitizer"
         },
         {
             "name": "gcc-latest-tsan",
             "inherits": ["gcc-latest", "tsan-base"],
-            "displayName": "GCC Latest ThreadSanitizer"
-        },
-        {
-            "name": "clang-17-debug",
-            "inherits": ["clang-17", "debug-base"],
-            "displayName": "Clang 17 Debug"
-        },
-        {
-            "name": "clang-17-release",
-            "inherits": ["clang-17", "release-base"],
-            "displayName": "Clang 17 Release"
+            "displayName": "GCC Latest with ThreadSanitizer"
         },
         {
             "name": "clang-17-asan",
             "inherits": ["clang-17", "asan-base"],
-            "displayName": "Clang 17 AddressSanitizer"
+            "displayName": "Clang 17 with AddressSanitizer"
         },
         {
             "name": "clang-17-tsan",
             "inherits": ["clang-17", "tsan-base"],
-            "displayName": "Clang 17 ThreadSanitizer"
-        },
-        {
-            "name": "clang-23-debug",
-            "inherits": ["clang-23", "debug-base"],
-            "displayName": "Clang 23 Debug"
-        },
-        {
-            "name": "clang-23-release",
-            "inherits": ["clang-23", "release-base"],
-            "displayName": "Clang 23 Release"
+            "displayName": "Clang 17 with ThreadSanitizer"
         },
         {
             "name": "clang-23-asan",
             "inherits": ["clang-23", "asan-base"],
-            "displayName": "Clang 23 AddressSanitizer"
+            "displayName": "Clang 23 with AddressSanitizer"
         },
         {
             "name": "clang-23-tsan",
             "inherits": ["clang-23", "tsan-base"],
-            "displayName": "Clang 23 ThreadSanitizer"
-        },
-        {
-            "name": "clang-latest-debug",
-            "inherits": ["clang-latest", "debug-base"],
-            "displayName": "Clang Latest Debug"
-        },
-        {
-            "name": "clang-latest-release",
-            "inherits": ["clang-latest", "release-base"],
-            "displayName": "Clang Latest Release"
+            "displayName": "Clang 23 with ThreadSanitizer"
         },
         {
             "name": "clang-latest-asan",
             "inherits": ["clang-latest", "asan-base"],
-            "displayName": "Clang Latest AddressSanitizer"
+            "displayName": "Clang Latest with AddressSanitizer"
         },
         {
             "name": "clang-latest-tsan",
             "inherits": ["clang-latest", "tsan-base"],
-            "displayName": "Clang Latest ThreadSanitizer"
+            "displayName": "Clang Latest with ThreadSanitizer"
+        },
+        {
+            "name": "clang-17-coverage",
+            "inherits": ["clang-17", "coverage-base"],
+            "displayName": "Clang 17 with Coverage"
+        },
+        {
+            "name": "clang-23-coverage",
+            "inherits": ["clang-23", "coverage-base"],
+            "displayName": "Clang 23 with Coverage"
+        },
+        {
+            "name": "clang-latest-coverage",
+            "inherits": ["clang-latest", "coverage-base"],
+            "displayName": "Clang Latest with Coverage"
+        },
+        {
+            "name": "clang-17-tidy",
+            "inherits": ["clang-17", "clang-tidy-base"],
+            "displayName": "Clang 17 with clang-tidy"
+        },
+        {
+            "name": "clang-23-tidy",
+            "inherits": ["clang-23", "clang-tidy-base"],
+            "displayName": "Clang 23 with clang-tidy"
+        },
+        {
+            "name": "clang-latest-tidy",
+            "inherits": ["clang-latest", "clang-tidy-base"],
+            "displayName": "Clang Latest with clang-tidy"
         }
     ],
     "buildPresets": [
         {
             "name": "gcc-17-debug",
-            "configurePreset": "gcc-17-debug"
+            "configurePreset": "gcc-17",
+            "configuration": "Debug"
         },
         {
             "name": "gcc-17-release",
-            "configurePreset": "gcc-17-release"
+            "configurePreset": "gcc-17",
+            "configuration": "Release"
         },
         {
             "name": "gcc-17-asan",
-            "configurePreset": "gcc-17-asan"
+            "configurePreset": "gcc-17-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "gcc-17-tsan",
-            "configurePreset": "gcc-17-tsan"
+            "configurePreset": "gcc-17-tsan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "gcc-23-debug",
-            "configurePreset": "gcc-23-debug"
+            "configurePreset": "gcc-23",
+            "configuration": "Debug"
         },
         {
             "name": "gcc-23-release",
-            "configurePreset": "gcc-23-release"
+            "configurePreset": "gcc-23",
+            "configuration": "Release"
         },
         {
             "name": "gcc-23-asan",
-            "configurePreset": "gcc-23-asan"
+            "configurePreset": "gcc-23-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "gcc-23-tsan",
-            "configurePreset": "gcc-23-tsan"
+            "configurePreset": "gcc-23-tsan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "gcc-latest-debug",
-            "configurePreset": "gcc-latest-debug"
+            "configurePreset": "gcc-latest",
+            "configuration": "Debug"
         },
         {
             "name": "gcc-latest-release",
-            "configurePreset": "gcc-latest-release"
+            "configurePreset": "gcc-latest",
+            "configuration": "Release"
         },
         {
             "name": "gcc-latest-asan",
-            "configurePreset": "gcc-latest-asan"
+            "configurePreset": "gcc-latest-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "gcc-latest-tsan",
-            "configurePreset": "gcc-latest-tsan"
+            "configurePreset": "gcc-latest-tsan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-17-debug",
-            "configurePreset": "clang-17-debug"
+            "configurePreset": "clang-17",
+            "configuration": "Debug"
         },
         {
             "name": "clang-17-release",
-            "configurePreset": "clang-17-release"
+            "configurePreset": "clang-17",
+            "configuration": "Release"
         },
         {
             "name": "clang-17-asan",
-            "configurePreset": "clang-17-asan"
+            "configurePreset": "clang-17-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-17-tsan",
-            "configurePreset": "clang-17-tsan"
+            "configurePreset": "clang-17-tsan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-23-debug",
-            "configurePreset": "clang-23-debug"
+            "configurePreset": "clang-23",
+            "configuration": "Debug"
         },
         {
             "name": "clang-23-release",
-            "configurePreset": "clang-23-release"
+            "configurePreset": "clang-23",
+            "configuration": "Release"
         },
         {
             "name": "clang-23-asan",
-            "configurePreset": "clang-23-asan"
+            "configurePreset": "clang-23-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-23-tsan",
-            "configurePreset": "clang-23-tsan"
+            "configurePreset": "clang-23-tsan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-latest-debug",
-            "configurePreset": "clang-latest-debug"
+            "configurePreset": "clang-latest",
+            "configuration": "Debug"
         },
         {
             "name": "clang-latest-release",
-            "configurePreset": "clang-latest-release"
+            "configurePreset": "clang-latest",
+            "configuration": "Release"
         },
         {
             "name": "clang-latest-asan",
-            "configurePreset": "clang-latest-asan"
+            "configurePreset": "clang-latest-asan",
+            "configuration": "RelWithDebInfo"
         },
         {
             "name": "clang-latest-tsan",
-            "configurePreset": "clang-latest-tsan"
+            "configurePreset": "clang-latest-tsan",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-17-coverage",
+            "configurePreset": "clang-17-coverage",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-23-coverage",
+            "configurePreset": "clang-23-coverage",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-latest-coverage",
+            "configurePreset": "clang-latest-coverage",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "clang-latest-tidy-debug",
+            "configurePreset": "clang-latest-tidy",
+            "configuration": "Debug"
+        },
+        {
+            "name": "clang-latest-tidy-release",
+            "configurePreset": "clang-latest-tidy",
+            "configuration": "Release"
         }
     ],
     "testPresets": [
         {
             "name": "gcc-17-debug",
-            "configurePreset": "gcc-17-debug",
+            "configurePreset": "gcc-17",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-17-release",
-            "configurePreset": "gcc-17-release",
+            "configurePreset": "gcc-17",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-17-asan",
             "configurePreset": "gcc-17-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-17-tsan",
             "configurePreset": "gcc-17-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-23-debug",
-            "configurePreset": "gcc-23-debug",
+            "configurePreset": "gcc-23",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-23-release",
-            "configurePreset": "gcc-23-release",
+            "configurePreset": "gcc-23",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-23-asan",
             "configurePreset": "gcc-23-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-23-tsan",
             "configurePreset": "gcc-23-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-latest-debug",
-            "configurePreset": "gcc-latest-debug",
+            "configurePreset": "gcc-latest",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-latest-release",
-            "configurePreset": "gcc-latest-release",
+            "configurePreset": "gcc-latest",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-latest-asan",
             "configurePreset": "gcc-latest-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "gcc-latest-tsan",
             "configurePreset": "gcc-latest-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-17-debug",
-            "configurePreset": "clang-17-debug",
+            "configurePreset": "clang-17",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-17-release",
-            "configurePreset": "clang-17-release",
+            "configurePreset": "clang-17",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-17-asan",
             "configurePreset": "clang-17-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-17-tsan",
             "configurePreset": "clang-17-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-23-debug",
-            "configurePreset": "clang-23-debug",
+            "configurePreset": "clang-23",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-23-release",
-            "configurePreset": "clang-23-release",
+            "configurePreset": "clang-23",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-23-asan",
             "configurePreset": "clang-23-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-23-tsan",
             "configurePreset": "clang-23-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-latest-debug",
-            "configurePreset": "clang-latest-debug",
+            "configurePreset": "clang-latest",
+            "configuration": "Debug",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-latest-release",
-            "configurePreset": "clang-latest-release",
+            "configurePreset": "clang-latest",
+            "configuration": "Release",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-latest-asan",
             "configurePreset": "clang-latest-asan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
         },
         {
             "name": "clang-latest-tsan",
             "configurePreset": "clang-latest-tsan",
+            "configuration": "RelWithDebInfo",
             "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-17-coverage",
+            "configurePreset": "clang-17-coverage",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-23-coverage",
+            "configurePreset": "clang-23-coverage",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-coverage",
+            "configurePreset": "clang-latest-coverage",
+            "configuration": "RelWithDebInfo",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-tidy-debug",
+            "configurePreset": "clang-latest-tidy",
+            "configuration": "Debug",
+            "output": {"outputOnFailure": true}
+        },
+        {
+            "name": "clang-latest-tidy-release",
+            "configurePreset": "clang-latest-tidy",
+            "configuration": "Release",
+            "output": {"outputOnFailure": true}
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "all-debug",
+            "displayName": "Configure, Build, and Test All Debug Configurations",
+            "description": "Runs all debug configurations across all compilers",
+            "steps": [
+                {"type": "configure", "name": "gcc-17"},
+                {"type": "build", "name": "gcc-17-debug"},
+                {"type": "test", "name": "gcc-17-debug"}
+            ]
+        },
+        {
+            "name": "all-release",
+            "displayName": "Configure, Build, and Test All Release Configurations",
+            "description": "Runs all release configurations across all compilers",
+            "steps": [
+                {"type": "configure", "name": "gcc-17"},
+                {"type": "build", "name": "gcc-17-release"},
+                {"type": "test", "name": "gcc-17-release"}
+            ]
+        },
+        {
+            "name": "gcc-17-all",
+            "displayName": "GCC 17: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for GCC 17",
+            "steps": [
+                {"type": "configure", "name": "gcc-17"},
+                {"type": "build", "name": "gcc-17-debug"},
+                {"type": "test", "name": "gcc-17-debug"},
+                {"type": "build", "name": "gcc-17-release"},
+                {"type": "test", "name": "gcc-17-release"}
+            ]
+        },
+        {
+            "name": "gcc-23-all",
+            "displayName": "GCC 23: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for GCC 23",
+            "steps": [
+                {"type": "configure", "name": "gcc-23"},
+                {"type": "build", "name": "gcc-23-debug"},
+                {"type": "test", "name": "gcc-23-debug"},
+                {"type": "build", "name": "gcc-23-release"},
+                {"type": "test", "name": "gcc-23-release"}
+            ]
+        },
+        {
+            "name": "gcc-latest-all",
+            "displayName": "GCC Latest: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for GCC Latest",
+            "steps": [
+                {"type": "configure", "name": "gcc-latest"},
+                {"type": "build", "name": "gcc-latest-debug"},
+                {"type": "test", "name": "gcc-latest-debug"},
+                {"type": "build", "name": "gcc-latest-release"},
+                {"type": "test", "name": "gcc-latest-release"}
+            ]
+        },
+        {
+            "name": "clang-17-all",
+            "displayName": "Clang 17: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for Clang 17",
+            "steps": [
+                {"type": "configure", "name": "clang-17"},
+                {"type": "build", "name": "clang-17-debug"},
+                {"type": "test", "name": "clang-17-debug"},
+                {"type": "build", "name": "clang-17-release"},
+                {"type": "test", "name": "clang-17-release"}
+            ]
+        },
+        {
+            "name": "clang-23-all",
+            "displayName": "Clang 23: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for Clang 23",
+            "steps": [
+                {"type": "configure", "name": "clang-23"},
+                {"type": "build", "name": "clang-23-debug"},
+                {"type": "test", "name": "clang-23-debug"},
+                {"type": "build", "name": "clang-23-release"},
+                {"type": "test", "name": "clang-23-release"}
+            ]
+        },
+        {
+            "name": "clang-latest-all",
+            "displayName": "Clang Latest: Configure, Build, and Test Debug and Release",
+            "description": "Configure once, then build and test both Debug and Release for Clang Latest",
+            "steps": [
+                {"type": "configure", "name": "clang-latest"},
+                {"type": "build", "name": "clang-latest-debug"},
+                {"type": "test", "name": "clang-latest-debug"},
+                {"type": "build", "name": "clang-latest-release"},
+                {"type": "test", "name": "clang-latest-release"}
+            ]
+        },
+        {
+            "name": "clang-latest-asan",
+            "displayName": "Clang Latest: Configure, Build, and Test with AddressSanitizer",
+            "description": "Configure, build, and test Clang Latest with AddressSanitizer",
+            "steps": [
+                {"type": "configure", "name": "clang-latest-asan"},
+                {"type": "build", "name": "clang-latest-asan"},
+                {"type": "test", "name": "clang-latest-asan"}
+            ]
+        },
+        {
+            "name": "clang-latest-tsan",
+            "displayName": "Clang Latest: Configure, Build, and Test with ThreadSanitizer",
+            "description": "Configure, build, and test Clang Latest with ThreadSanitizer",
+            "steps": [
+                {"type": "configure", "name": "clang-latest-tsan"},
+                {"type": "build", "name": "clang-latest-tsan"},
+                {"type": "test", "name": "clang-latest-tsan"}
+            ]
+        },
+        {
+            "name": "clang-latest-coverage",
+            "displayName": "Clang Latest: Configure, Build, Test, and Generate Coverage Report",
+            "description": "Configure, build, test with coverage instrumentation, and generate HTML coverage report",
+            "steps": [
+                {"type": "configure", "name": "clang-latest-coverage"},
+                {"type": "build", "name": "clang-latest-coverage"},
+                {"type": "test", "name": "clang-latest-coverage"}
+            ]
+        },
+        {
+            "name": "clang-latest-tidy",
+            "displayName": "Clang Latest: Configure and Build with clang-tidy",
+            "description": "Configure and build with clang-tidy static analysis enabled",
+            "steps": [
+                {"type": "configure", "name": "clang-latest-tidy"},
+                {"type": "build", "name": "clang-latest-tidy-debug"}
+            ]
         }
     ]
 }

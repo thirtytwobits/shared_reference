@@ -1,3 +1,6 @@
+// Copyright (c) Zoox.
+// SPDX-License-Identifier: MIT
+
 #include <iostream>
 
 int main()

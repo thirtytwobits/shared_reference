@@ -1,9 +1,11 @@
-#include "zoox/memory_w_unique_reference.h"
+// Copyright (c) Zoox.
+// SPDX-License-Identifier: MIT
+
+#include "zoox/memory_w_ref_owner.hpp"
 
 #include <gtest/gtest.h>
 
 #include <atomic>
-#include <optional>
 #include <thread>
 
 namespace zoox
