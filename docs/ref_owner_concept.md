@@ -81,6 +81,109 @@ With `ref_owner`, destruction is **always** in phase 5. The timing budget is exp
 
 **Explicit contracts** replace implicit assumptions. Today, APIs passing raw pointers rely on documentation: "don't store this" or "valid until X." `unique_reference` makes this contract type-safe and compiler-enforced.
 
+## What this Looks Like
+
+### The Documentation-Only Approach (Status Quo)
+
+Consider a sensor data API in a real-time system:
+
+```cpp
+class SensorPool {
+public:
+    /**
+     * Returns a pointer to the latest sensor reading.
+     * 
+     * WARNING: The returned pointer is only valid until the next call to
+     * reclaim_memory(). Callers MUST NOT store this pointer beyond the
+     * current processing phase. Failure to release before memory reclamation
+     * will result in undefined behavior.
+     * 
+     * @return Pointer to sensor data. Never null.
+     */
+    SensorData* get_latest_reading();
+    
+    /**
+     * Reclaims memory from expired sensor readings.
+     * Called at phase 5 of each frame. All pointers returned by
+     * get_latest_reading() become INVALID after this call.
+     */
+    void reclaim_memory();
+};
+```
+
+The contract is clear in documentation, but **nothing enforces it**:
+
+```cpp
+void process_frame(SensorPool& pool) {
+    SensorData* data = pool.get_latest_reading();
+    
+    // Bug: developer stores the pointer for "later use"
+    static SensorData* cached_data = nullptr;
+    cached_data = data;  // Compiles fine. Silent contract violation.
+    
+    // ... later, in another frame ...
+    cached_data->read();  // Undefined behavior. No warning. No error.
+}
+```
+
+### The ref_owner Approach
+
+The same API with `ref_owner`:
+
+```cpp
+class SensorPool {
+public:
+    /**
+     * Returns a reference to the latest sensor reading.
+     * 
+     * The returned reference MUST be released before reclaim_memory() is called.
+     * Unlike raw pointers, this contract is enforced at runtime - violations
+     * are detected and reported rather than causing silent undefined behavior.
+     */
+    unique_reference<SensorData> get_latest_reading() {
+        return current_reading_.make_ref();
+    }
+    
+    /**
+     * Reclaims memory from expired sensor readings.
+     * 
+     * @return true if reclamation succeeded (all references released)
+     * @return false if outstanding references exist (contract violation detected)
+     */
+    bool reclaim_memory() {
+        return current_reading_.mark_and_delete_if_ready();
+    }
+
+private:
+    ref_owner<SensorData> current_reading_;
+};
+```
+
+Now contract violations are **detectable**:
+
+```cpp
+void process_frame(SensorPool& pool) {
+    auto reading = pool.get_latest_reading();
+    
+    // Use the data safely
+    reading->process();
+    
+}  // reading destructor runs here - reference released
+
+// At phase 5:
+if (!pool.reclaim_memory()) {
+    // CONTRACT VIOLATION DETECTED!
+    // We know exactly what went wrong: someone held a reference too long.
+    // Log it, alert on it, fail the test, crash in debug - your choice.
+    log_error("SensorPool: references held past reclamation deadline");
+}
+```
+
+
+**The key insight**: With `ref_owner`, the contract violation transforms from **undefined behavior** (silent corruption, crashes hours later) to **explicit failure** (immediate detection, clear error message, debuggable state). It does this while preventing non-deterministic destruction of the object or requiring a complex deletion queue and object lifecycle container.
+
+> **NOTE** The author is aware there is a way to re-create this semantic using shared_ptr and is still deciding if the clean and distinct vocabulary of this proposal is enough to warrent its existence alone.
+
 ## Current Scope: `unique_reference`
 
 The initial proposal focuses on the single-owner case:
@@ -124,23 +227,17 @@ else
 }
 ```
 
-**Open challenge**: `shared_reference` requires a control block for its own reference counting (independent of the owner's count). Traditional implementations heap-allocate this. I'm exploring heap-free solutions before including this in the proposal - ideas welcome.
+**Open challenge**: `shared_reference` requires a control block for its own reference counting (independent of the owner's count). Traditional implementations heap-allocate this. I'm exploring heap-free solutions before including this in the proposal.
 
 ## What I'm Looking For
 
 1. **Direction check**: Does this address a real gap in the standard library?
 2. **Naming feedback**: `ref_owner` / `unique_reference` / `shared_reference`
-3. **Scope guidance**: Start with `unique_reference` only, or include `shared_reference`?
+3. **Scope guidance**: Is this something SG14 want's to discuss/develop?
 4. **Design concerns**: Anything fundamentally problematic?
-5. **`shared_reference` control block**: Ideas for heap-free reference counting among borrowers?
+5. **Static Analysis**: How could we move this semantic into the compiler? It doesn't seem possible on its face but I'd love more ideas here.
+6. **Implementing this using Hazard Pointers (C++26)** There's tradeoffs here in making this proposal an RAII vocabulary built on top of Hazard pointers versus the simplicity of ref counting.
 
 ## Resources
 
 - Full proposal draft: [`docs/ref_owner_proposal.md`](ref_owner_proposal.md)
-- Working implementation: [`include/zoox/memory_w_unique_reference.h`](../include/zoox/memory_w_unique_reference.h)
-- TLA+ specification: [`specs/UniqueReference.tla`](../specs/UniqueReference.tla)
-- Unit tests with TSAN coverage
-
----
-
-*This concept document accompanies a working prototype with formal verification. Happy to share the repository for deeper review.*
